@@ -64,6 +64,8 @@
             this.GraphPathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.DataPathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.Delete = new System.Windows.Forms.Button();
+            this.LoadData = new System.Windows.Forms.Button();
+            this.FileList = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // FolderPath
@@ -194,9 +196,9 @@
             // 
             // RangeFind
             // 
-            this.RangeFind.Location = new System.Drawing.Point(12, 35);
+            this.RangeFind.Location = new System.Drawing.Point(357, 35);
             this.RangeFind.Name = "RangeFind";
-            this.RangeFind.Size = new System.Drawing.Size(183, 31);
+            this.RangeFind.Size = new System.Drawing.Size(164, 31);
             this.RangeFind.TabIndex = 14;
             this.RangeFind.Text = "Range find";
             this.RangeFind.UseVisualStyleBackColor = true;
@@ -351,11 +353,34 @@
             this.Delete.UseVisualStyleBackColor = true;
             this.Delete.Click += new System.EventHandler(this.Delete_Click);
             // 
+            // LoadData
+            // 
+            this.LoadData.Location = new System.Drawing.Point(191, 36);
+            this.LoadData.Name = "LoadData";
+            this.LoadData.Size = new System.Drawing.Size(164, 30);
+            this.LoadData.TabIndex = 33;
+            this.LoadData.Text = "Load data";
+            this.LoadData.UseVisualStyleBackColor = true;
+            this.LoadData.Click += new System.EventHandler(this.LoadData_Click);
+            // 
+            // FileList
+            // 
+            this.FileList.FormattingEnabled = true;
+            this.FileList.ItemHeight = 12;
+            this.FileList.Location = new System.Drawing.Point(12, 44);
+            this.FileList.Name = "FileList";
+            this.FileList.Size = new System.Drawing.Size(173, 16);
+            this.FileList.Sorted = true;
+            this.FileList.TabIndex = 34;
+
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(942, 515);
+            this.Controls.Add(this.FileList);
+            this.Controls.Add(this.LoadData);
             this.Controls.Add(this.Delete);
             this.Controls.Add(this.Condition);
             this.Controls.Add(this.ConditionLabel);
@@ -435,6 +460,8 @@
         private System.Windows.Forms.FolderBrowserDialog GraphPathDialog;
         private System.Windows.Forms.FolderBrowserDialog DataPathDialog;
         private System.Windows.Forms.Button Delete;
+        private System.Windows.Forms.Button LoadData;
+        private System.Windows.Forms.ListBox FileList;
     }
 }
 

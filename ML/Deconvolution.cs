@@ -8,5 +8,6 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.ML
 {
     internal class Deconvolution
     {
+        
     }
 }
