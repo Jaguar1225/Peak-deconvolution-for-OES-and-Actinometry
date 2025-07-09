@@ -2,6 +2,7 @@
 using System;
 
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Extensions;
 
 namespace Peak_deconvolution_for_OES_and_Actinometry.ML
 {
@@ -11,11 +12,22 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.ML
         {
             var LAMatrix = Matrix<double>.Build.DenseOfArray(Matrix);
 
-            var svd = LAMatrix.Svd(true);
-            var eigenVector = svd.VT.Row(0);
+            var Mean = LAMatrix.Mean();
+            for (int i = 0; i < LAMatrix.RowCount; i++)
+                LAMatrix.SetRow(i, LAMatrix.Row(i) - Mean);
 
-            var Score = (LAMatrix*eigenVector).ToArray<double>();
-            double variance = Math.Pow(svd.S[0],2)/(LAMatrix.RowCount-1);
+            var n = LAMatrix.ColumnCount;
+            var eigenVector = Vector<double>.Build.Random(n).Normalize(2.0);
+
+            for (int iter = 0; iter < 100; iter++)
+            {
+                var Xv = LAMatrix * eigenVector;
+                eigenVector = LAMatrix.Transpose() * Xv / (LAMatrix.RowCount - 1);
+                eigenVector = eigenVector.Normalize(2.0);
+            }
+
+            var Score = (LAMatrix*eigenVector).ToArray();
+            double variance = eigenVector*LAMatrix.Transpose() * (LAMatrix * eigenVector)/ (LAMatrix.RowCount - 1);
 
             return (Score, variance);
         }
