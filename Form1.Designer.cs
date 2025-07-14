@@ -66,6 +66,11 @@
             this.Delete = new System.Windows.Forms.Button();
             this.LoadData = new System.Windows.Forms.Button();
             this.FileList = new System.Windows.Forms.ListBox();
+            this.NoCond = new System.Windows.Forms.TextBox();
+            this.NoCondLabel = new System.Windows.Forms.Label();
+            this.NoClusterLabel = new System.Windows.Forms.Label();
+            this.NoCluster = new System.Windows.Forms.TextBox();
+            this.OesPlot = new ScottPlot.WinForms.FormsPlot();
             this.SuspendLayout();
             // 
             // FolderPath
@@ -74,7 +79,7 @@
             this.FolderPath.Name = "FolderPath";
             this.FolderPath.Size = new System.Drawing.Size(218, 21);
             this.FolderPath.TabIndex = 0;
-            this.FolderPath.Text = "C:\\Users\\User\\Desktop\\OES data";
+            this.FolderPath.Text = "C:\\Users\\User\\Desktop\\Test";
             this.FolderPath.Click += new System.EventHandler(this.FolderPath_Click);
             // 
             // FolderPathLabel
@@ -89,23 +94,23 @@
             // Result
             // 
             this.Result.DisplayScale = 0F;
-            this.Result.Location = new System.Drawing.Point(527, 176);
+            this.Result.Location = new System.Drawing.Point(586, 176);
             this.Result.Name = "Result";
-            this.Result.Size = new System.Drawing.Size(408, 327);
+            this.Result.Size = new System.Drawing.Size(414, 327);
             this.Result.TabIndex = 2;
             // 
             // Profile1
             // 
             this.Profile1.DisplayScale = 0F;
-            this.Profile1.Location = new System.Drawing.Point(9, 315);
+            this.Profile1.Location = new System.Drawing.Point(8, 315);
             this.Profile1.Name = "Profile1";
-            this.Profile1.Size = new System.Drawing.Size(249, 188);
+            this.Profile1.Size = new System.Drawing.Size(278, 188);
             this.Profile1.TabIndex = 3;
             // 
             // ProfileLabel1
             // 
             this.ProfileLabel1.AutoSize = true;
-            this.ProfileLabel1.Location = new System.Drawing.Point(10, 291);
+            this.ProfileLabel1.Location = new System.Drawing.Point(15, 291);
             this.ProfileLabel1.Name = "ProfileLabel1";
             this.ProfileLabel1.Size = new System.Drawing.Size(84, 12);
             this.ProfileLabel1.TabIndex = 4;
@@ -114,7 +119,7 @@
             // GraphLabel
             // 
             this.GraphLabel.AutoSize = true;
-            this.GraphLabel.Location = new System.Drawing.Point(527, 161);
+            this.GraphLabel.Location = new System.Drawing.Point(595, 161);
             this.GraphLabel.Name = "GraphLabel";
             this.GraphLabel.Size = new System.Drawing.Size(39, 12);
             this.GraphLabel.TabIndex = 5;
@@ -122,16 +127,16 @@
             // 
             // YLabel
             // 
-            this.YLabel.Location = new System.Drawing.Point(574, 133);
+            this.YLabel.Location = new System.Drawing.Point(633, 139);
             this.YLabel.Name = "YLabel";
             this.YLabel.Size = new System.Drawing.Size(218, 21);
             this.YLabel.TabIndex = 6;
-            this.YLabel.TextChanged += new System.EventHandler(this.YLabel_TextChanged);
+            this.YLabel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.YLabel_KeyDown);
             // 
             // YLabelText
             // 
             this.YLabelText.AutoSize = true;
-            this.YLabelText.Location = new System.Drawing.Point(529, 136);
+            this.YLabelText.Location = new System.Drawing.Point(588, 142);
             this.YLabelText.Name = "YLabelText";
             this.YLabelText.Size = new System.Drawing.Size(44, 12);
             this.YLabelText.TabIndex = 7;
@@ -140,7 +145,7 @@
             // XLabelText
             // 
             this.XLabelText.AutoSize = true;
-            this.XLabelText.Location = new System.Drawing.Point(529, 109);
+            this.XLabelText.Location = new System.Drawing.Point(588, 115);
             this.XLabelText.Name = "XLabelText";
             this.XLabelText.Size = new System.Drawing.Size(44, 12);
             this.XLabelText.TabIndex = 8;
@@ -148,15 +153,15 @@
             // 
             // XLabel
             // 
-            this.XLabel.Location = new System.Drawing.Point(574, 106);
+            this.XLabel.Location = new System.Drawing.Point(633, 112);
             this.XLabel.Name = "XLabel";
             this.XLabel.Size = new System.Drawing.Size(218, 21);
             this.XLabel.TabIndex = 9;
-            this.XLabel.TextChanged += new System.EventHandler(this.XLabel_TextChanged);
+            this.XLabel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.XLabel_KeyDown);
             // 
             // Append
             // 
-            this.Append.Location = new System.Drawing.Point(151, 253);
+            this.Append.Location = new System.Drawing.Point(156, 253);
             this.Append.Name = "Append";
             this.Append.Size = new System.Drawing.Size(136, 31);
             this.Append.TabIndex = 10;
@@ -166,7 +171,7 @@
             // 
             // Deconvolution
             // 
-            this.Deconvolution.Location = new System.Drawing.Point(9, 253);
+            this.Deconvolution.Location = new System.Drawing.Point(14, 253);
             this.Deconvolution.Name = "Deconvolution";
             this.Deconvolution.Size = new System.Drawing.Size(136, 31);
             this.Deconvolution.TabIndex = 11;
@@ -176,7 +181,7 @@
             // 
             // SaveGraph
             // 
-            this.SaveGraph.Location = new System.Drawing.Point(663, 69);
+            this.SaveGraph.Location = new System.Drawing.Point(722, 75);
             this.SaveGraph.Name = "SaveGraph";
             this.SaveGraph.Size = new System.Drawing.Size(136, 31);
             this.SaveGraph.TabIndex = 12;
@@ -186,7 +191,7 @@
             // 
             // SaveData
             // 
-            this.SaveData.Location = new System.Drawing.Point(799, 69);
+            this.SaveData.Location = new System.Drawing.Point(858, 75);
             this.SaveData.Name = "SaveData";
             this.SaveData.Size = new System.Drawing.Size(136, 31);
             this.SaveData.TabIndex = 13;
@@ -196,9 +201,9 @@
             // 
             // RangeFind
             // 
-            this.RangeFind.Location = new System.Drawing.Point(357, 35);
+            this.RangeFind.Location = new System.Drawing.Point(358, 33);
             this.RangeFind.Name = "RangeFind";
-            this.RangeFind.Size = new System.Drawing.Size(164, 31);
+            this.RangeFind.Size = new System.Drawing.Size(100, 31);
             this.RangeFind.TabIndex = 14;
             this.RangeFind.Text = "Range find";
             this.RangeFind.UseVisualStyleBackColor = true;
@@ -209,21 +214,22 @@
             this.RangePlot.DisplayScale = 0F;
             this.RangePlot.Location = new System.Drawing.Point(12, 69);
             this.RangePlot.Name = "RangePlot";
-            this.RangePlot.Size = new System.Drawing.Size(509, 178);
+            this.RangePlot.Size = new System.Drawing.Size(274, 178);
             this.RangePlot.TabIndex = 15;
             // 
             // Wavelength1
             // 
-            this.Wavelength1.Location = new System.Drawing.Point(100, 288);
+            this.Wavelength1.Location = new System.Drawing.Point(105, 288);
             this.Wavelength1.Name = "Wavelength1";
             this.Wavelength1.Size = new System.Drawing.Size(57, 21);
             this.Wavelength1.TabIndex = 16;
-            this.Wavelength1.TextChanged += new System.EventHandler(this.Wavelength2_TextChanged);
+            this.Wavelength1.Text = "703";
+            this.Wavelength1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Wavelength1_KeyDown);
             // 
             // ProfileLabel2
             // 
             this.ProfileLabel2.AutoSize = true;
-            this.ProfileLabel2.Location = new System.Drawing.Point(262, 291);
+            this.ProfileLabel2.Location = new System.Drawing.Point(267, 291);
             this.ProfileLabel2.Name = "ProfileLabel2";
             this.ProfileLabel2.Size = new System.Drawing.Size(84, 12);
             this.ProfileLabel2.TabIndex = 17;
@@ -232,28 +238,31 @@
             // Profile2
             // 
             this.Profile2.DisplayScale = 0F;
-            this.Profile2.Location = new System.Drawing.Point(264, 315);
+            this.Profile2.Location = new System.Drawing.Point(292, 315);
             this.Profile2.Name = "Profile2";
-            this.Profile2.Size = new System.Drawing.Size(257, 188);
+            this.Profile2.Size = new System.Drawing.Size(278, 188);
             this.Profile2.TabIndex = 18;
             // 
             // Wavelength2
             // 
-            this.Wavelength2.Location = new System.Drawing.Point(356, 288);
+            this.Wavelength2.Location = new System.Drawing.Point(361, 288);
             this.Wavelength2.Name = "Wavelength2";
             this.Wavelength2.Size = new System.Drawing.Size(57, 21);
             this.Wavelength2.TabIndex = 19;
+            this.Wavelength2.Text = "750";
+            this.Wavelength2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Wavelength2_KeyDown);
+
             // 
             // Area1
             // 
-            this.Area1.Location = new System.Drawing.Point(199, 288);
+            this.Area1.Location = new System.Drawing.Point(204, 288);
             this.Area1.Name = "Area1";
             this.Area1.Size = new System.Drawing.Size(57, 21);
             this.Area1.TabIndex = 20;
             // 
             // Area2
             // 
-            this.Area2.Location = new System.Drawing.Point(454, 288);
+            this.Area2.Location = new System.Drawing.Point(459, 288);
             this.Area2.Name = "Area2";
             this.Area2.Size = new System.Drawing.Size(67, 21);
             this.Area2.TabIndex = 21;
@@ -295,7 +304,7 @@
             // RatioLabel
             // 
             this.RatioLabel.AutoSize = true;
-            this.RatioLabel.Location = new System.Drawing.Point(419, 262);
+            this.RatioLabel.Location = new System.Drawing.Point(424, 262);
             this.RatioLabel.Name = "RatioLabel";
             this.RatioLabel.Size = new System.Drawing.Size(33, 12);
             this.RatioLabel.TabIndex = 26;
@@ -304,7 +313,7 @@
             // AreaLabel1
             // 
             this.AreaLabel1.AutoSize = true;
-            this.AreaLabel1.Location = new System.Drawing.Point(164, 291);
+            this.AreaLabel1.Location = new System.Drawing.Point(169, 291);
             this.AreaLabel1.Name = "AreaLabel1";
             this.AreaLabel1.Size = new System.Drawing.Size(31, 12);
             this.AreaLabel1.TabIndex = 27;
@@ -313,7 +322,7 @@
             // AreaLabel2
             // 
             this.AreaLabel2.AutoSize = true;
-            this.AreaLabel2.Location = new System.Drawing.Point(419, 291);
+            this.AreaLabel2.Location = new System.Drawing.Point(424, 291);
             this.AreaLabel2.Name = "AreaLabel2";
             this.AreaLabel2.Size = new System.Drawing.Size(31, 12);
             this.AreaLabel2.TabIndex = 28;
@@ -321,7 +330,7 @@
             // 
             // Ratio
             // 
-            this.Ratio.Location = new System.Drawing.Point(454, 259);
+            this.Ratio.Location = new System.Drawing.Point(459, 259);
             this.Ratio.Name = "Ratio";
             this.Ratio.Size = new System.Drawing.Size(67, 21);
             this.Ratio.TabIndex = 29;
@@ -329,7 +338,7 @@
             // ConditionLabel
             // 
             this.ConditionLabel.AutoSize = true;
-            this.ConditionLabel.Location = new System.Drawing.Point(293, 262);
+            this.ConditionLabel.Location = new System.Drawing.Point(298, 262);
             this.ConditionLabel.Name = "ConditionLabel";
             this.ConditionLabel.Size = new System.Drawing.Size(58, 12);
             this.ConditionLabel.TabIndex = 30;
@@ -337,7 +346,7 @@
             // 
             // Condition
             // 
-            this.Condition.Location = new System.Drawing.Point(357, 259);
+            this.Condition.Location = new System.Drawing.Point(362, 259);
             this.Condition.Name = "Condition";
             this.Condition.Size = new System.Drawing.Size(56, 21);
             this.Condition.TabIndex = 31;
@@ -345,7 +354,7 @@
             // 
             // Delete
             // 
-            this.Delete.Location = new System.Drawing.Point(527, 69);
+            this.Delete.Location = new System.Drawing.Point(586, 75);
             this.Delete.Name = "Delete";
             this.Delete.Size = new System.Drawing.Size(136, 31);
             this.Delete.TabIndex = 32;
@@ -355,9 +364,9 @@
             // 
             // LoadData
             // 
-            this.LoadData.Location = new System.Drawing.Point(191, 36);
+            this.LoadData.Location = new System.Drawing.Point(151, 35);
             this.LoadData.Name = "LoadData";
-            this.LoadData.Size = new System.Drawing.Size(164, 30);
+            this.LoadData.Size = new System.Drawing.Size(87, 30);
             this.LoadData.TabIndex = 33;
             this.LoadData.Text = "Load data";
             this.LoadData.UseVisualStyleBackColor = true;
@@ -369,16 +378,61 @@
             this.FileList.ItemHeight = 12;
             this.FileList.Location = new System.Drawing.Point(12, 44);
             this.FileList.Name = "FileList";
-            this.FileList.Size = new System.Drawing.Size(173, 16);
+            this.FileList.Size = new System.Drawing.Size(133, 16);
             this.FileList.Sorted = true;
             this.FileList.TabIndex = 34;
-
+            // 
+            // NoCond
+            // 
+            this.NoCond.Location = new System.Drawing.Point(302, 39);
+            this.NoCond.Name = "NoCond";
+            this.NoCond.Size = new System.Drawing.Size(49, 21);
+            this.NoCond.TabIndex = 35;
+            // 
+            // NoCondLabel
+            // 
+            this.NoCondLabel.AutoSize = true;
+            this.NoCondLabel.Location = new System.Drawing.Point(239, 44);
+            this.NoCondLabel.Name = "NoCondLabel";
+            this.NoCondLabel.Size = new System.Drawing.Size(63, 12);
+            this.NoCondLabel.TabIndex = 36;
+            this.NoCondLabel.Text = "No. Cond.";
+            // 
+            // NoClusterLabel
+            // 
+            this.NoClusterLabel.AutoSize = true;
+            this.NoClusterLabel.Location = new System.Drawing.Point(464, 44);
+            this.NoClusterLabel.Name = "NoClusterLabel";
+            this.NoClusterLabel.Size = new System.Drawing.Size(62, 12);
+            this.NoClusterLabel.TabIndex = 38;
+            this.NoClusterLabel.Text = "No. Clust.";
+            // 
+            // NoCluster
+            // 
+            this.NoCluster.Location = new System.Drawing.Point(527, 39);
+            this.NoCluster.Name = "NoCluster";
+            this.NoCluster.Size = new System.Drawing.Size(43, 21);
+            this.NoCluster.TabIndex = 37;
+            this.NoCluster.KeyDown +=new System.Windows.Forms.KeyEventHandler(this.NoCluster_KeyDown);
+            // 
+            // OesPlot
+            // 
+            this.OesPlot.DisplayScale = 0F;
+            this.OesPlot.Location = new System.Drawing.Point(292, 69);
+            this.OesPlot.Name = "OesPlot";
+            this.OesPlot.Size = new System.Drawing.Size(274, 178);
+            this.OesPlot.TabIndex = 39;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(942, 515);
+            this.ClientSize = new System.Drawing.Size(1012, 515);
+            this.Controls.Add(this.OesPlot);
+            this.Controls.Add(this.NoClusterLabel);
+            this.Controls.Add(this.NoCluster);
+            this.Controls.Add(this.NoCondLabel);
+            this.Controls.Add(this.NoCond);
             this.Controls.Add(this.FileList);
             this.Controls.Add(this.LoadData);
             this.Controls.Add(this.Delete);
@@ -462,6 +516,11 @@
         private System.Windows.Forms.Button Delete;
         private System.Windows.Forms.Button LoadData;
         private System.Windows.Forms.ListBox FileList;
+        private System.Windows.Forms.TextBox NoCond;
+        private System.Windows.Forms.Label NoCondLabel;
+        private System.Windows.Forms.Label NoClusterLabel;
+        private System.Windows.Forms.TextBox NoCluster;
+        private ScottPlot.WinForms.FormsPlot OesPlot;
     }
 }
 

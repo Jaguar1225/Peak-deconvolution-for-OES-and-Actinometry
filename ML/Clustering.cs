@@ -14,7 +14,7 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.ML
 
         public Clustering() { }
 
-        public static (Vector<double>, double) KMC(double[] Score, int numCluster)
+        public static (int[], double) KMC(double[] Score, int numCluster)
         {
             var VectorScore = Vector<double>.Build.Dense(Score);
             var VectorCenter = Vector<double>.Build.Dense(numCluster);
@@ -37,7 +37,9 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.ML
                 label = tempLabel; // 레이블 업데이트
                 VectorCenter = MeanOfCluster(VectorScore, label); // 클러스터 중심 업데이트
             }
-            return (label, ValidityScore(VectorScore, label, VectorCenter));
+            int[] intlabel = label.ToArray().Select(x => (int)x).ToArray();
+            double[] doubleCener = VectorCenter.ToArray<double>();
+            return (intlabel, ValidityScore(VectorScore, label, VectorCenter));
         }
         public static Vector<double> CalculateDistances(Vector<double> score, double center)
         {
@@ -69,7 +71,7 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.ML
             var Distance = Matrix<double>.Build.Dense(VectorScore.Count, VectorCenter.Count);
             for (int i = 0; i < VectorCenter.Count; i++)
             {
-                Distance.SetColumn(i, CalculateDistances(VectorCenter, VectorCenter[i]));
+                Distance.SetColumn(i, CalculateDistances(VectorScore, VectorCenter[i]));
                 ClusterDistance[i] = label.Where(x => x == i).Sum();
             }
             double clusterSum = ClusterDistance.Sum();

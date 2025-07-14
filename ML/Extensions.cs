@@ -19,6 +19,10 @@ namespace MathNet.Numerics.LinearAlgebra.Extensions
         {
             return Vector<double>.Build.Dense(matrix.EnumerateRows().Select(func).ToArray());
         }
+        public static Vector<double> MapCols(this Matrix<double> matrix, Func<Vector<double>, double> func)
+        {
+            return Vector<double>.Build.Dense(matrix.EnumerateColumns().Select(func).ToArray());
+        }
     }
     public static class VectorExtensions
     {
@@ -30,6 +34,10 @@ namespace MathNet.Numerics.LinearAlgebra.Extensions
         public static double Mean(this Vector<double> vector)
         {
             return vector.Sum() / vector.Count;
+        }
+        public static double StandardDeviation(this Vector<double> vector, double mean)
+        {
+            return Math.Sqrt(vector.Select(x => Math.Pow(x - mean, 2)).Sum() / (vector.Count - 1));
         }
         public static List<int> Where(this Vector<double> vector, Func<double, bool> predicate)
         {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double; // Ensure you have MathNet.Numerics installed
 
 namespace Peak_deconvolution_for_OES_and_Actinometry.Utills
 {
@@ -16,14 +17,14 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.Utills
 
         public Csvhandler() { }
         // Method to read CSV file and return data as a list of strings
-        public static (float[] Wavelengths, List<OESIntensityRecord> Records) ReadCsv(string filePath, char delimiter)
+        public static (double[] Wavelengths, List<OESIntensityRecord> Records) ReadCsv(string filePath, char delimiter)
         {
             var lines = System.IO.File.ReadAllLines(filePath);
             if (lines.Length < 2)
                 throw new Exception("CSV file is empty or has no data.");
 
             var header = lines[0].Split(delimiter);
-            var wavelengths = header.Skip(1).Select(s => float.Parse(s)).ToArray();
+            var wavelengths = header.Skip(1).Select(s => double.Parse(s)).ToArray();
 
             var records = new List<OESIntensityRecord>();
             for (int i = 1; i < lines.Length; i++)
@@ -41,7 +42,7 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.Utills
             }
             return (wavelengths, records);
         }
-        public static (double[], double[,]) RecordsToMatrix(List<OESIntensityRecord> records, int numWavelengths)
+        public static (double[], Matrix<double>) RecordsToMatrix(List<OESIntensityRecord> records, int numWavelengths)
         {
             double[] Timestamp = new double[records.Count];
             double[,] matrix = new double[records.Count, numWavelengths];
@@ -54,11 +55,12 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.Utills
                     matrix[i, j] = records[i].Intensity[j];
                 }
             }
-            return (Timestamp, matrix);
+            Matrix<double> LAMatrix = Matrix<double>.Build.DenseOfArray(matrix);
+            return (Timestamp, LAMatrix);
         }
 
         // Method to write data to a CSV file
-        public void WriteCsv(string filePath, List<string> data)
+        public static void WriteCsv(string filePath, List<string> data)
         {
             try
             {

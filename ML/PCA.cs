@@ -8,13 +8,14 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.ML
 {
     internal class PCA
     {
-        public static (double[], double) Transform(double[,] Matrix)
+        public static (double[], double) Transform(Matrix<double> matrix)
         {
-            var LAMatrix = Matrix<double>.Build.DenseOfArray(Matrix);
-
-            var Mean = LAMatrix.Mean();
+            var Mean = matrix.MapCols(col => col.Mean());
+            var Std = matrix.MapCols(col => col.StandardDeviation(2.0));
+            Matrix<double> LAMatrix = Matrix<double>.Build.Dense(matrix.RowCount, matrix.ColumnCount);
+            
             for (int i = 0; i < LAMatrix.RowCount; i++)
-                LAMatrix.SetRow(i, LAMatrix.Row(i) - Mean);
+                LAMatrix.SetRow(i, (matrix.Row(i) - Mean)/Std);
 
             var n = LAMatrix.ColumnCount;
             var eigenVector = Vector<double>.Build.Random(n).Normalize(2.0);
@@ -26,8 +27,14 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.ML
                 eigenVector = eigenVector.Normalize(2.0);
             }
 
-            var Score = (LAMatrix*eigenVector).ToArray();
-            double variance = eigenVector*LAMatrix.Transpose() * (LAMatrix * eigenVector)/ (LAMatrix.RowCount - 1);
+
+            var Score = (LAMatrix * eigenVector).ToArray();
+            if (Score.Average() < 0)
+            {
+                Score = Score.Select(x => -x).ToArray(); // Ensure positive scores
+                eigenVector = -eigenVector; // Adjust eigenvector accordingly
+            }
+            double variance = eigenVector* LAMatrix.Transpose() * (LAMatrix * eigenVector)/ (LAMatrix.RowCount - 1);
 
             return (Score, variance);
         }
