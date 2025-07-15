@@ -1,5 +1,7 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using Accord.Math;
+using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Extensions;
+using Peak_deconvolution_for_OES_and_Actinometry.Utills;
 using ScottPlot;
 using ScottPlot.Colormaps;
 using ScottPlot.Finance;
@@ -11,6 +13,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,10 +25,10 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
         private string _folderPath, _filePath, _dataPath, _graphPath;
 
         private List<Utills.Csvhandler.OESIntensityRecord> _records;
-        private double _variance;
-        private int[] _label;
+        private int[] _label_total, _label_power_on_off, _label_condition;
         private int _idx_wavelength_1, _idx_wavelength_2;
-        private double[] _timestamp, _scores, _wavelengths, _w_profile_1, _profile_1,_w_profile_2, _profile_2;
+        private double[,] _scores, _variance;
+        private double[] _timestamp, _wavelengths, _w_profile_1, _profile_1,_w_profile_2, _profile_2;
         private double[] _conditions, _ratios;
         private Matrix<double> _recordsMatrix;
 
@@ -117,6 +120,24 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
                 MessageBox.Show("Please select a folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private async void FileList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (FileList.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a file from the list.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                _filePath = System.IO.Path.Combine(FolderPath.Text, FileList.SelectedItem.ToString() + ".csv");
+                (_wavelengths, _records) = await Csvhandler.ReadCsvAsync(_filePath, ','); // Read the CSV file asynchronously
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+        }
 
         private async void LoadData_Click(object sender, EventArgs e)
         {
@@ -130,15 +151,23 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
                 MessageBox.Show("Please select a file from the list.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            _folderPath = FolderPath.Text;
-            _filePath = System.IO.Path.Combine(_folderPath, FileList.SelectedItem.ToString() + ".csv");
-            // Here you would add the logic to load the data based on the provided paths.
-            (_wavelengths, _records) = Utills.Csvhandler.ReadCsv(_filePath, ','); // Example usage of the Csvhandler to read data
-            (_timestamp, _recordsMatrix) = Utills.Csvhandler.RecordsToMatrix(_records, _wavelengths.Length); // Convert records to matrix format
+            try
+            {
+                _folderPath = FolderPath.Text;
+                _filePath = System.IO.Path.Combine(_folderPath, FileList.SelectedItem.ToString() + ".csv");
+                // Here you would add the logic to load the data based on the provided paths.
+                (_wavelengths, _records) = await Csvhandler.ReadCsvAsync(_filePath, ','); // Read the CSV file asynchronously
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            (_timestamp, _recordsMatrix) = Csvhandler.RecordsToMatrix(_records, _wavelengths.Length); // Convert records to matrix format
             _records?.Clear(); // Clear the records list to free up memory
-            (_scores, _variance) = ML.PCA.Transform(_recordsMatrix); // Perform PCA transformation on the records matrix
-            var init_label = new int[_scores.Length]; // Initialize the label array for clustering
-            await RangePlot_Update(_timestamp, _scores, init_label); // Initialize the range plot with the timestamp and scores
+            (_scores, _variance) = await ML.PCA.TransformNonNegativeAsync(_recordsMatrix); // Perform PCA transformation on the records matrix
+            var init_label = new int[_scores.GetLength(0)]; // Initialize the label array for clustering
+            await RangePlot_Update(_timestamp, _scores.GetColumn(0), init_label); // Initialize the range plot with the timestamp and scores
         }
         private async void SaveData_Click(object sender, EventArgs e)
         {
@@ -187,6 +216,7 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
                 await Task.CompletedTask; // Placeholder for any save logic you might want to implement
             }
         }
+
         private async void SaveGraph_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(GraphPath.Text) || string.IsNullOrEmpty(FolderPath.Text) || FileList.SelectedItem == null)
@@ -211,11 +241,31 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
         private async void RangeFind_Click(object sender, EventArgs e)
         {
             int numCond;
-            if (int.TryParse(NoCond.Text, out numCond))
+            if (int.TryParse(Eps.Text, out numCond))
             {
                 double validity;
-                (_label, validity) = ML.Clustering.KMC(_scores, int.Parse(NoCond.Text));
-                await RangePlot_Update(_timestamp, _scores, _label); // Update the range plot with the new labels
+                (_label_power_on_off, validity) = ML.Clustering.KMC(_scores, 2);
+                var _idx_power_on = _label_power_on_off
+                    .Select((value, index) => new { value, index })
+                    .Where(x => x.value == 1)
+                    .Select(x => x.index)
+                    .ToList(); // Get the indices of the power-on labels
+
+                var _scores_power_on = _scores.GetRows(_idx_power_on); // Filter the scores matrix based on the power-on labels
+                (_label_condition, validity) = ML.Clustering.DBSCAN(_scores_power_on, _scores.GetStd(0)*Math.Pow(0.1,double.Parse(Eps.Text)), 10); // Perform DBSCAN clustering on the power-on scores
+                _label_total = new int[_label_power_on_off.Length]; // Initialize the total label array
+                for (int i = 0; i < _label_power_on_off.Length; i++)
+                {
+                    if (_label_power_on_off[i] == 1)
+                    {
+                        _label_total[i] = _label_condition[_idx_power_on.IndexOf(i)]; // Assign the condition label to the total label
+                    }
+                    else
+                    {
+                        _label_total[i] = 0; // Assign 0 for power-off labels
+                    }
+                }
+                await RangePlot_Update(_timestamp, _scores.GetColumn(0), _label_total); // Update the range plot with the new labels
                 NoCluster.Text = 1.ToString(); // Update the number of clusters found
                 double[] p1 = new double[5]{
                     1,
@@ -249,7 +299,7 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
                     plt.XLabel("Time (s)");
                     System.Drawing.Color[] clusterColors = new System.Drawing.Color[]
                     {
-                   System.Drawing.Color.Red, System.Drawing.Color.Green, System.Drawing.Color.Blue,
+                     System.Drawing.Color.Red, System.Drawing.Color.Green, System.Drawing.Color.Blue,
                      System.Drawing.Color.Yellow, System.Drawing.Color.Cyan, System.Drawing.Color.Magenta
                     };
 
@@ -293,13 +343,23 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
 
                             if ((length > 0) && SegDetect)
                             {
+                                // Create a segment for the current cluster
+                                ScottPlot.Color _color;
+                                if (label[start]>0)
+                                {
+                                    _color = ScottPlot.Color.FromColor(clusterColors[cluster % clusterColors.Length]);
+                                }
+                                else
+                                {
+                                    _color = ScottPlot.Color.FromColor(System.Drawing.Color.Gray); // Use gray for power-off segments
+                                }
                                 double[] x = new double[length];
                                 double[] y = new double[length];
                                 Array.Copy(timestamp, start, x, 0, length);
                                 Array.Copy(score, start, y, 0, length);
                                 var sig = plt.Add.Scatter(
                                     x, y,
-                                    color: ScottPlot.Color.FromColor(clusterColors[cluster % clusterColors.Length])
+                                    color: _color
                                     );
                                 sig.LineWidth = 2; // Set line width for better visibility
                                 sig.MarkerSize = 3; // Set marker size for better visibility
@@ -363,7 +423,7 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
                     plt.XLabel("Wavelength (nm)");
                     plt.YLabel("Intensity");
                     plt.Title("OES Intensity Plot");
-                    var clusterIndicies = _label
+                    var clusterIndicies = _label_total
                         .Select((value, index) => new { value, index })
                         .Where(x => x.value == int.Parse(NoCluster.Text) - 1)
                         .Select(x => x.index)
@@ -417,12 +477,12 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
                 plt.Clear(); // Clear the previous plot
                 plt.XLabel("Wavelength (nm)");
                 plt.YLabel("Intensity");
-                var indicies = _label
+                var indicies = _label_total
                     .Select((value, index) => new { value, index })
                     .Where(x => x.value == int.Parse(NoCluster.Text) - 1)
                     .Select(x => x.index)
                     .ToList();
-                _label.Where(l => l == (int.Parse(NoCluster.Text) - 1)).ToList();
+                _label_total.Where(l => l == (int.Parse(NoCluster.Text) - 1)).ToList();
                 var clusterCenter = _recordsMatrix.Rows(indicies).Mean().ToArray(); // Filter the records matrix based on the selected cluster
 
                 _w_profile_1 = new double[20];
@@ -504,7 +564,7 @@ namespace Peak_deconvolution_for_OES_and_Actinometry
                         plt.XLabel("Wavelength (nm)");
                         plt.YLabel("Intensity");
 
-                        var indicies = _label
+                        var indicies = _label_total
                             .Select((value, index) => new { value, index })
                             .Where(x => x.value == int.Parse(NoCluster.Text) - 1)
                             .Select(x => x.index)

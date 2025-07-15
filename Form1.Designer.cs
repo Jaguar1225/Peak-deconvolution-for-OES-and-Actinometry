@@ -66,8 +66,8 @@
             this.Delete = new System.Windows.Forms.Button();
             this.LoadData = new System.Windows.Forms.Button();
             this.FileList = new System.Windows.Forms.ListBox();
-            this.NoCond = new System.Windows.Forms.TextBox();
-            this.NoCondLabel = new System.Windows.Forms.Label();
+            this.Eps = new System.Windows.Forms.TextBox();
+            this.EpsLabel = new System.Windows.Forms.Label();
             this.NoClusterLabel = new System.Windows.Forms.Label();
             this.NoCluster = new System.Windows.Forms.TextBox();
             this.OesPlot = new ScottPlot.WinForms.FormsPlot();
@@ -201,7 +201,7 @@
             // 
             // RangeFind
             // 
-            this.RangeFind.Location = new System.Drawing.Point(358, 33);
+            this.RangeFind.Location = new System.Drawing.Point(324, 34);
             this.RangeFind.Name = "RangeFind";
             this.RangeFind.Size = new System.Drawing.Size(100, 31);
             this.RangeFind.TabIndex = 14;
@@ -251,7 +251,6 @@
             this.Wavelength2.TabIndex = 19;
             this.Wavelength2.Text = "750";
             this.Wavelength2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Wavelength2_KeyDown);
-
             // 
             // Area1
             // 
@@ -381,27 +380,28 @@
             this.FileList.Size = new System.Drawing.Size(133, 16);
             this.FileList.Sorted = true;
             this.FileList.TabIndex = 34;
+            this.FileList.SelectedIndexChanged += new System.EventHandler(this.FileList_SelectedIndexChanged);
             // 
-            // NoCond
+            // Eps
             // 
-            this.NoCond.Location = new System.Drawing.Point(302, 39);
-            this.NoCond.Name = "NoCond";
-            this.NoCond.Size = new System.Drawing.Size(49, 21);
-            this.NoCond.TabIndex = 35;
+            this.Eps.Location = new System.Drawing.Point(269, 39);
+            this.Eps.Name = "Eps";
+            this.Eps.Size = new System.Drawing.Size(49, 21);
+            this.Eps.TabIndex = 35;
             // 
-            // NoCondLabel
+            // EpsLabel
             // 
-            this.NoCondLabel.AutoSize = true;
-            this.NoCondLabel.Location = new System.Drawing.Point(239, 44);
-            this.NoCondLabel.Name = "NoCondLabel";
-            this.NoCondLabel.Size = new System.Drawing.Size(63, 12);
-            this.NoCondLabel.TabIndex = 36;
-            this.NoCondLabel.Text = "No. Cond.";
+            this.EpsLabel.AutoSize = true;
+            this.EpsLabel.Location = new System.Drawing.Point(239, 44);
+            this.EpsLabel.Name = "EpsLabel";
+            this.EpsLabel.Size = new System.Drawing.Size(27, 12);
+            this.EpsLabel.TabIndex = 36;
+            this.EpsLabel.Text = "Eps";
             // 
             // NoClusterLabel
             // 
             this.NoClusterLabel.AutoSize = true;
-            this.NoClusterLabel.Location = new System.Drawing.Point(464, 44);
+            this.NoClusterLabel.Location = new System.Drawing.Point(430, 45);
             this.NoClusterLabel.Name = "NoClusterLabel";
             this.NoClusterLabel.Size = new System.Drawing.Size(62, 12);
             this.NoClusterLabel.TabIndex = 38;
@@ -409,11 +409,11 @@
             // 
             // NoCluster
             // 
-            this.NoCluster.Location = new System.Drawing.Point(527, 39);
+            this.NoCluster.Location = new System.Drawing.Point(493, 40);
             this.NoCluster.Name = "NoCluster";
             this.NoCluster.Size = new System.Drawing.Size(43, 21);
             this.NoCluster.TabIndex = 37;
-            this.NoCluster.KeyDown +=new System.Windows.Forms.KeyEventHandler(this.NoCluster_KeyDown);
+            this.NoCluster.KeyDown += new System.Windows.Forms.KeyEventHandler(this.NoCluster_KeyDown);
             // 
             // OesPlot
             // 
@@ -431,8 +431,8 @@
             this.Controls.Add(this.OesPlot);
             this.Controls.Add(this.NoClusterLabel);
             this.Controls.Add(this.NoCluster);
-            this.Controls.Add(this.NoCondLabel);
-            this.Controls.Add(this.NoCond);
+            this.Controls.Add(this.EpsLabel);
+            this.Controls.Add(this.Eps);
             this.Controls.Add(this.FileList);
             this.Controls.Add(this.LoadData);
             this.Controls.Add(this.Delete);
@@ -516,8 +516,8 @@
         private System.Windows.Forms.Button Delete;
         private System.Windows.Forms.Button LoadData;
         private System.Windows.Forms.ListBox FileList;
-        private System.Windows.Forms.TextBox NoCond;
-        private System.Windows.Forms.Label NoCondLabel;
+        private System.Windows.Forms.TextBox Eps;
+        private System.Windows.Forms.Label EpsLabel;
         private System.Windows.Forms.Label NoClusterLabel;
         private System.Windows.Forms.TextBox NoCluster;
         private ScottPlot.WinForms.FormsPlot OesPlot;

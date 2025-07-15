@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double; // Ensure you have MathNet.Numerics installed
 
@@ -41,6 +41,39 @@ namespace Peak_deconvolution_for_OES_and_Actinometry.Utills
                 });
             }
             return (wavelengths, records);
+        }
+        public static async Task<(double[] Wavelengths, List<OESIntensityRecord> Records)> ReadCsvAsync(string filePath, char delimite)
+        {
+            return await LoadingManager.RunWithLoadingAsync(async () =>
+            {
+                LoadingManager.UpdateMessage("Reading CSV file...");
+
+                var lines = System.IO.File.ReadAllLines(filePath);
+                if (lines.Length < 2)
+                    throw new Exception("CSV file is empty or has no data.");
+
+                var header = lines[0].Split(delimite);
+                var wavelengths = header.Skip(1).Select(s => double.Parse(s)).ToArray();
+
+                var records = new List<OESIntensityRecord>();
+                for (int i = 1; i < lines.Length; i++)
+                {
+                    var parts = lines[i].Split(delimite);
+                    if (parts.Length != wavelengths.Length + 1)
+                        throw new Exception("CSV file format is incorrect.");
+                    var timestamp = DateTime.ParseExact(parts[0], "yyyyMMdd_HH:mm:ss.fff", null);
+                    var intensity = parts.Skip(1).Select(s => int.Parse(s)).ToArray();
+                    records.Add(new OESIntensityRecord
+                    {
+                        Timestamp = timestamp,
+                        Intensity = intensity
+                    });
+                    LoadingManager.UpdateProgress((int)((i / (double)(lines.Length - 1)) * 100));
+                }
+                LoadingManager.UpdateProgress(100);
+                await Task.Delay(100); // Simulate some delay for UI update
+                return (wavelengths, records);
+            });
         }
         public static (double[], Matrix<double>) RecordsToMatrix(List<OESIntensityRecord> records, int numWavelengths)
         {

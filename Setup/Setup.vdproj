@@ -1622,7 +1622,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Setup"
         "ProductCode" = "8:{3DB1A852-2FD8-43A1-B2D0-AF073BD3ED83}"
-        "PackageCode" = "8:{120646A1-296A-4BAC-A677-4B8A52732212}"
+        "PackageCode" = "8:{8AC68174-6F24-40FA-B4D4-4305BB90E2C8}"
         "UpgradeCode" = "8:{A188A182-810B-4E09-BE51-62452E48CA05}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -1742,6 +1742,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_13E93C619D9F4AA59D439CDCE2FB682D"
+            {
+            "Name" = "8:Shortcut to %s기본 출력 from Peak deconvolution for OES and Actinometry (Active)"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_9A16362326B04A0BA428A580A3647008"
+            "Folder" = "8:_9D9BFF53EE804135A607A7981F79104F"
+            "WorkingFolder" = "8:_B4D596FD29484AFEBCAC6975276C39C6"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
